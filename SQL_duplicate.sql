@@ -100,3 +100,25 @@ case
 end
 
 select * from dbo.[Nashville Housing Data];
+
+/*remove duplicates*/
+
+with RowNumCTE as (
+select *,
+	ROW_NUMBER () over (
+		partition by ParcelID, PropertyAddress, SalePrice, SaleDate, LegalReference
+		order by UniqueID
+		)row_num
+
+
+from dbo.[Nashville Housing Data]
+)
+select * 
+from RowNumCTE
+where row_num>1
+/* delete some unused column*/
+
+alter table dbo.[Nashville Housing Data]
+	drop column OwnerAddress, TaxDistrict, SoldAsVacant
+
+select * from dbo.[Nashville Housing Data]
